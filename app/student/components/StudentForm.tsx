@@ -3,14 +3,14 @@
 import type React from "react"
 
 import {useEffect, useState} from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { User, GraduationCap } from "lucide-react"
-import type { Student } from "@/lib/types"
-import { classOptions } from "@/lib/utils"
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
+import {Label} from "@/components/ui/label"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
+import {User, GraduationCap} from "lucide-react"
+import type {Student} from "@/lib/types"
+import {classOptions} from "@/lib/utils"
 import axios from "axios";
 import {BASE_URL} from "@/apiurl";
 
@@ -18,18 +18,12 @@ interface StudentFormProps {
     onSubmit: (student: Student) => void
 }
 
-export default function StudentForm({ onSubmit }: StudentFormProps) {
+export default function StudentForm({onSubmit}: StudentFormProps) {
     const [name, setName] = useState("")
     const [admissionNumber, setAdmissionNumber] = useState("")
     const [selectedClass, setSelectedClass] = useState("")
     const [errors, setErrors] = useState<{ name?: string; class?: string }>({})
 
-    useEffect(() => {
-        axios.get(`${BASE_URL}/api/menu/timeslots`)
-            .then((response) => {
-                console.log("Time slots fetched successfully:", response.data)
-        })
-    }, []);
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         const newErrors: { name?: string; class?: string } = {}
@@ -45,7 +39,16 @@ export default function StudentForm({ onSubmit }: StudentFormProps) {
         setErrors(newErrors)
 
         if (Object.keys(newErrors).length === 0) {
-            onSubmit({ name: name.trim(), class: selectedClass })
+            const student: Student = {
+                name: name.trim(),
+                admissionNumber: admissionNumber.trim(),
+                class: selectedClass,
+            };
+
+            localStorage.setItem("student", JSON.stringify(student));
+
+            onSubmit({name: name.trim(), admissionNumber: admissionNumber, class: selectedClass})
+
         }
     }
 
@@ -53,7 +56,8 @@ export default function StudentForm({ onSubmit }: StudentFormProps) {
         <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
             <Card className="w-full max-w-md">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl font-bold text-orange-600">Welcome to St. Xavier's Canteen</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-orange-600">Welcome to St. Xavier's
+                        Canteen</CardTitle>
                     <CardDescription>Please enter your details to start ordering</CardDescription>
                 </CardHeader>
                 <CardContent>

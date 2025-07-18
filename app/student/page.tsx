@@ -123,7 +123,7 @@ export default function StudentPage() {
             <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 p-4">
                 <div className="max-w-4xl mx-auto py-8">
                     <TimeSlotSelector
-                        timeSlots={canteenData.timeSlots}
+                        // timeSlots={canteenData.timeSlots}
                         selectedSlot={selectedTimeSlot}
                         onSelectSlot={handleTimeSlotSelect}
                         onContinue={handleTimeSlotContinue}

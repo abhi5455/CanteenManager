@@ -4,15 +4,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Clock, Users } from "lucide-react"
 import type { TimeSlot } from "@/lib/types"
+import {useEffect, useState} from "react";
+import axios from "axios";
+import {BASE_URL} from "@/apiurl";
 
 interface TimeSlotSelectorProps {
-    timeSlots: TimeSlot[]
+    // timeSlots: TimeSlot[]
     selectedSlot: string | null
     onSelectSlot: (slotId: string) => void
     onContinue: () => void
 }
 
-export default function TimeSlotSelector({ timeSlots, selectedSlot, onSelectSlot, onContinue }: TimeSlotSelectorProps) {
+export default function TimeSlotSelector({ selectedSlot, onSelectSlot, onContinue }: TimeSlotSelectorProps) {
     const getAvailabilityColor = (current: number, capacity: number) => {
         const percentage = (current / capacity) * 100
         if (percentage < 50) return "text-green-600"
@@ -26,6 +29,19 @@ export default function TimeSlotSelector({ timeSlots, selectedSlot, onSelectSlot
         if (percentage < 80) return "Filling Up"
         return "Almost Full"
     }
+
+    const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([])
+
+    useEffect(() => {
+        axios.get(`${BASE_URL}/api/menu/timeslots`)
+            .then(res => {
+                // console.log(res.data)
+                setTimeSlots(res.data)
+            })
+            .catch(error => {
+                console.error("Error fetching time slots:", error)
+            })
+    }, []);
 
     return (
         <div className="space-y-6">
