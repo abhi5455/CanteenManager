@@ -21,6 +21,7 @@ export default function OrderTable({ orders, onUpdateStatus }: OrderTableProps) 
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState<string>("all")
     const [fetchedOrders, setFetchedOrders] = useState<Order[]>([])
+    const [triggerUpdate, setTriggerUpdate] = useState(1)
 
     useEffect(() => {
         axios.get(`${BASE_URL}/api/admin/orders`)
@@ -48,11 +49,63 @@ export default function OrderTable({ orders, onUpdateStatus }: OrderTableProps) 
         { value: "completed", label: "Completed" },
     ]
 
-    const handleFoodReceived = (orderId: number) => {
-        console.log(`Food received button clicked for order ID: ${orderId}`)
-        // Add your logic here to handle the food received action
-        // For example, you could update the order status or make an API call
-    }
+    const [completedOrders, setCompletedOrders] = useState([])
+    useEffect(() => {
+        const existing = localStorage.getItem("foodReceivedOrderIds");
+        setCompletedOrders(existing ? JSON.parse(existing) : []);
+        console.log(completedOrders)
+    }, [triggerUpdate]);
+
+    const handleFoodReceived = async (order: any) => {
+        let orderId = order._id;
+        console.log("Handling food received for order:", order, orderId);
+        // if (!orderId || isNaN(orderId)) {
+        //     console.error("Invalid orderId provided:", orderId);
+        //     return;
+        // }
+
+        console.log(`✅ Food received button clicked for order ID: ${orderId}`);
+
+        try {
+            // Read existing IDs
+            const existing = localStorage.getItem("foodReceivedOrderIds");
+            let orderIds: number[] = existing ? JSON.parse(existing) : [];
+
+            if (!Array.isArray(orderIds)) {
+                orderIds = []; // reset if somehow corrupted
+            }
+
+            // Append if not already present
+            if (!orderIds.includes(orderId)) {
+                orderIds.push(orderId);
+            }
+
+            // Save back
+            localStorage.setItem("foodReceivedOrderIds", JSON.stringify(orderIds));
+
+            console.log("📦 Updated foodReceivedOrderIds:", orderIds);
+            setTriggerUpdate(prev => prev + 1);
+
+            // Optional API call commented
+            /*
+            const response = await fetch(`/api/orders/${orderId}/received`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ receivedAt: new Date().toISOString() }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to update order status: ${response.statusText}`);
+            }
+            */
+        } catch (err) {
+            console.error("❌ Error handling food received:", err);
+        }
+    };
+
+
 
     return (
         <Card>
@@ -73,18 +126,18 @@ export default function OrderTable({ orders, onUpdateStatus }: OrderTableProps) 
                             className="pl-10"
                         />
                     </div>
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className="w-full sm:w-48">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {statusOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    {/*<Select value={statusFilter} onValueChange={setStatusFilter}>*/}
+                    {/*    <SelectTrigger className="w-full sm:w-48">*/}
+                    {/*        <SelectValue />*/}
+                    {/*    </SelectTrigger>*/}
+                    {/*    <SelectContent>*/}
+                    {/*        {statusOptions.map((option) => (*/}
+                    {/*            <SelectItem key={option.value} value={option.value}>*/}
+                    {/*                {option.label}*/}
+                    {/*            </SelectItem>*/}
+                    {/*        ))}*/}
+                    {/*    </SelectContent>*/}
+                    {/*</Select>*/}
                 </div>
             </CardHeader>
 
@@ -162,14 +215,18 @@ export default function OrderTable({ orders, onUpdateStatus }: OrderTableProps) 
                                         </Select>
                                     </TableCell>
 
+                                    {completedOrders.includes(order._id) ? (
+                                        <></>
+                                    ):
                                     <TableCell>
                                         <button
-                                            onClick={() => handleFoodReceived(order.id)}
+                                            onClick={() => handleFoodReceived(order)}
                                             className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
                                         >
                                             Food Received
                                         </button>
                                     </TableCell>
+                                    }
                                 </TableRow>
                             ))}
                         </TableBody>

@@ -130,8 +130,7 @@ export default function AdminPage() {
                             </CardHeader>
                             <CardContent>
                                 <p className="text-gray-600">
-                                    Settings panel coming soon. This will include menu management, time slot configuration, and system
-                                    preferences.
+                                    Settings panel coming soon.
                                 </p>
                             </CardContent>
                         </Card>
