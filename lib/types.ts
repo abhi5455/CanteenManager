@@ -23,6 +23,7 @@ export interface OrderItem {
 export interface Order {
     id: number
     studentName: string
+    studentAdmissionNumber: string
     studentClass: string
     items: OrderItem[]
     total: number

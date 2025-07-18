@@ -6,9 +6,11 @@ import TimeSlotSelector from "./components/TimeSlotSelector"
 import MenuGrid from "./components/MenuGrid"
 import ShoppingCart from "./components/ShoppingCart"
 import OrderConfirmation from "./components/OrderConfirmation"
-import type { Student, MenuItem, OrderItem, Order } from "@/lib/types"
+import type {Student, MenuItem, OrderItem, Order, TimeSlot} from "@/lib/types"
 import { generateOrderNumber } from "@/lib/utils"
 import canteenData from "@/lib/data.json"
+import axios from "axios";
+import {BASE_URL} from "@/apiurl";
 
 type Step = "student-info" | "time-slot" | "menu" | "confirmation"
 
@@ -25,8 +27,11 @@ export default function StudentPage() {
         setCurrentStep("time-slot")
     }
 
-    const handleTimeSlotSelect = (slotId: string) => {
-        setSelectedTimeSlot(slotId)
+    const handleTimeSlotSelect = (slot: TimeSlot) => {
+        console.log("Selected Slot ID:", slot)
+        localStorage.setItem("selectedTimeSlot", JSON.stringify(slot))
+
+        setSelectedTimeSlot(slot.id)
     }
 
     const handleTimeSlotContinue = () => {
@@ -81,22 +86,50 @@ export default function StudentPage() {
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 2000))
 
-        const selectedSlot = canteenData.timeSlots.find((slot) => slot.id === selectedTimeSlot)
+        let selectedSlot = canteenData.timeSlots.find((slot) => slot.id === selectedTimeSlot)
+        selectedSlot = JSON.parse(localStorage.getItem("selectedTimeSlot") || "{}")
+        const orderingStudent: Student = JSON.parse(localStorage.getItem("student") || "{}")
+        console.log("Selected student:", orderingStudent)
         const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
-        const order: Order = {
+        const order = {
             id: Date.now(),
-            studentName: student.name,
-            studentClass: student.class,
+            admissionNumber: orderingStudent.admissionNumber,
+            name: orderingStudent.name,
+            class: orderingStudent.class,
             items: cart,
             total,
-            timeSlot: selectedSlot?.time || "",
+            timeSlot: selectedSlot?.id || "",
             status: "pending",
             timestamp: new Date().toISOString(),
             orderNumber: generateOrderNumber(),
         }
 
-        setConfirmedOrder(order)
+        console.log("Placing order:", order)
+        let orderNumber = ''
+        axios.post(`${BASE_URL}/api/student/order`, order)
+            .then(response => {
+                console.log("Order placed successfully:", response.data)
+                orderNumber = response.data.orderNumber
+            })
+            .catch(error => {
+                console.error("Error placing order:", error)
+            })
+
+        const confirmedOrder: Order = {
+            id: Date.now(),
+            studentAdmissionNumber: orderingStudent.admissionNumber,
+            studentName: orderingStudent.name,
+            studentClass: orderingStudent.class,
+            items: cart,
+            total,
+            timeSlot: selectedSlot?.id || "",
+            status: "pending",
+            timestamp: new Date().toISOString(),
+            orderNumber: orderNumber,
+        }
+
+        setConfirmedOrder(confirmedOrder)
         setCurrentStep("confirmation")
         setIsPlacingOrder(false)
     }
@@ -110,7 +143,9 @@ export default function StudentPage() {
     }
 
     const getSelectedTimeSlotLabel = () => {
-        const slot = canteenData.timeSlots.find((slot) => slot.id === selectedTimeSlot)
+        let slot = canteenData.timeSlots.find((slot) => slot.id === selectedTimeSlot)
+        slot = JSON.parse(localStorage.getItem("selectedTimeSlot") || "{}")
+        // console.log("Selected Slot:", slot)
         return slot?.time || ""
     }
 

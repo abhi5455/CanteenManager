@@ -45,9 +45,14 @@ export default function OrderConfirmation({ order, onNewOrder }: OrderConfirmati
                         </div>
 
                         <div className="flex items-center justify-between">
+                            <span className="font-medium">Admission Number:</span>
+                            <span>{JSON.parse(localStorage.getItem("student") || "{}").admissionNumber}</span>
+                        </div>
+
+                        <div className="flex items-center justify-between">
                             <span className="font-medium">Time Slot:</span>
                             <div className="flex items-center gap-1">
-                                <Clock className="w-4 h-4" />
+                                <Clock className="w-4 h-4"/>
                                 <span>{order.timeSlot}</span>
                             </div>
                         </div>
@@ -56,7 +61,7 @@ export default function OrderConfirmation({ order, onNewOrder }: OrderConfirmati
                     {/* Order Items */}
                     <div>
                         <h3 className="font-medium mb-3 flex items-center gap-2">
-                            <Receipt className="w-4 h-4" />
+                            <Receipt className="w-4 h-4"/>
                             Order Items
                         </h3>
                         <div className="space-y-2">

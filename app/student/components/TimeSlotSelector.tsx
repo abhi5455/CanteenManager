@@ -11,7 +11,7 @@ import {BASE_URL} from "@/apiurl";
 interface TimeSlotSelectorProps {
     // timeSlots: TimeSlot[]
     selectedSlot: string | null
-    onSelectSlot: (slotId: string) => void
+    onSelectSlot: (slot: TimeSlot) => void
     onContinue: () => void
 }
 
@@ -35,7 +35,7 @@ export default function TimeSlotSelector({ selectedSlot, onSelectSlot, onContinu
     useEffect(() => {
         axios.get(`${BASE_URL}/api/menu/timeslots`)
             .then(res => {
-                // console.log(res.data)
+                console.log(res.data)
                 setTimeSlots(res.data)
             })
             .catch(error => {
@@ -62,7 +62,7 @@ export default function TimeSlotSelector({ selectedSlot, onSelectSlot, onContinu
                             className={`cursor-pointer transition-all ${
                                 isSelected ? "ring-2 ring-orange-500 bg-orange-50" : "hover:shadow-md"
                             }`}
-                            onClick={() => onSelectSlot(slot.id)}
+                            onClick={() => onSelectSlot(slot)}
                         >
                             <CardHeader className="pb-3">
                                 <CardTitle className="flex items-center justify-between">
