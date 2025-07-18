@@ -18,7 +18,7 @@ export const addOrderItem = async (orderId, item) => {
 
 // New API function to add item to menu
 export const addMenuItem = async (item) => {
-    const res = await axios.post(`${BASE_URL}/api/addItem`, item);
+    const res = await axios.post(`${BASE_URL}/api/order-item/addItem`, item);
     return res.data;
 };
 
