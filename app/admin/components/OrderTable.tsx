@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Search, User, GraduationCap, Clock, Receipt } from "lucide-react"
 import type { Order } from "@/lib/types"
-import { formatCurrency, getStatusColor } from "@/lib/utils"
+import { formatCurrency } from "@/lib/utils"
+import axios from "axios";
+import {BASE_URL} from "@/apiurl";
 
 interface OrderTableProps {
     orders: Order[]
@@ -18,8 +20,16 @@ interface OrderTableProps {
 export default function OrderTable({ orders, onUpdateStatus }: OrderTableProps) {
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState<string>("all")
+    const [fetchedOrders, setFetchedOrders] = useState<Order[]>([])
 
-    const filteredOrders = orders.filter((order) => {
+    useEffect(() => {
+        axios.get(`${BASE_URL}/api/admin/orders`)
+            .then((res=>{
+                setFetchedOrders(res.data)
+            }))
+    }, []);
+
+    const filteredOrders = fetchedOrders.filter((order) => {
         const matchesSearch =
             order.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.studentClass.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -37,6 +47,12 @@ export default function OrderTable({ orders, onUpdateStatus }: OrderTableProps) 
         { value: "ready", label: "Ready" },
         { value: "completed", label: "Completed" },
     ]
+
+    const handleFoodReceived = (orderId: number) => {
+        console.log(`Food received button clicked for order ID: ${orderId}`)
+        // Add your logic here to handle the food received action
+        // For example, you could update the order status or make an API call
+    }
 
     return (
         <Card>
@@ -82,8 +98,8 @@ export default function OrderTable({ orders, onUpdateStatus }: OrderTableProps) 
                                 <TableHead>Items</TableHead>
                                 <TableHead>Time Slot</TableHead>
                                 <TableHead>Total</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Actions</TableHead>
+                                <TableHead>Payment Status</TableHead>
+                                <TableHead>Food Received</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -132,24 +148,27 @@ export default function OrderTable({ orders, onUpdateStatus }: OrderTableProps) 
                                     </TableCell>
 
                                     <TableCell>
-                                        <Badge className={getStatusColor(order.status)}>{order.status.toUpperCase()}</Badge>
-                                    </TableCell>
-
-                                    <TableCell>
                                         <Select
-                                            value={order.status}
-                                            onValueChange={(newStatus: Order["status"]) => onUpdateStatus(order.id, newStatus)}
+                                            defaultValue="pending"
+                                            onValueChange={(value) => console.log(`Payment status changed to ${value} for order ${order.id}`)}
                                         >
                                             <SelectTrigger className="w-32">
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="pending">Pending</SelectItem>
-                                                <SelectItem value="preparing">Preparing</SelectItem>
-                                                <SelectItem value="ready">Ready</SelectItem>
-                                                <SelectItem value="completed">Completed</SelectItem>
+                                                <SelectItem value="paid">Amount Paid</SelectItem>
+                                                <SelectItem value="pending">Amount Pending</SelectItem>
                                             </SelectContent>
                                         </Select>
+                                    </TableCell>
+
+                                    <TableCell>
+                                        <button
+                                            onClick={() => handleFoodReceived(order.id)}
+                                            className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+                                        >
+                                            Food Received
+                                        </button>
                                     </TableCell>
                                 </TableRow>
                             ))}

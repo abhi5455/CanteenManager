@@ -2,39 +2,40 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TrendingUp, DollarSign, Clock, ChefHat } from "lucide-react"
-import type { SystemStats } from "@/lib/types"
+import type {Order, SystemStats} from "@/lib/types"
 import { formatCurrency } from "@/lib/utils"
 
 interface StatsDashboardProps {
     stats: SystemStats
+    fetchedOrders: Order[]
 }
 
-export default function StatsDashboard({ stats }: StatsDashboardProps) {
+export default function StatsDashboard({fetchedOrders, stats }: StatsDashboardProps) {
     const statCards = [
         {
             title: "Total Orders Today",
-            value: stats.totalMealsOrdered.toString(),
+            value: fetchedOrders.length,
             icon: ChefHat,
             color: "text-blue-600",
             bgColor: "bg-blue-50",
         },
         {
             title: "Today's Revenue",
-            value: formatCurrency(stats.todayRevenue),
+            value: fetchedOrders.reduce((total, order) => total + order.total, 0),
             icon: DollarSign,
             color: "text-green-600",
             bgColor: "bg-green-50",
         },
         {
             title: "Pending Orders",
-            value: stats.totalPendingOrders.toString(),
+            value: fetchedOrders.filter(order => order.status === "pending").length,
             icon: Clock,
             color: "text-yellow-600",
             bgColor: "bg-yellow-50",
         },
         {
             title: "Pending Dues",
-            value: formatCurrency(stats.pendingDues),
+            value: 0,
             icon: TrendingUp,
             color: "text-red-600",
             bgColor: "bg-red-50",

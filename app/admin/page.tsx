@@ -12,6 +12,8 @@ import OrderTable from "./components/OrderTable"
 import KitchenView from "./components/KitchenView"
 import type { Order } from "@/lib/types"
 import canteenData from "@/lib/data.json"
+import axios from "axios";
+import {BASE_URL} from "@/apiurl";
 
 export default function AdminPage() {
     const [orders, setOrders] = useState<Order[]>(canteenData.orders)
@@ -31,6 +33,16 @@ export default function AdminPage() {
             prevOrders.map((order) => (order.id === orderId ? { ...order, status: newStatus } : order)),
         )
     }
+
+    const [fetchedOrders, setFetchedOrders] = useState<Order[]>([])
+
+    useEffect(() => {
+        axios.get(`${BASE_URL}/api/admin/orders`)
+            .then((res=>{
+                console.log("Fetched orders:", res.data)
+                setFetchedOrders(res.data)
+            }))
+    }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -57,16 +69,16 @@ export default function AdminPage() {
                 {currentTime.toLocaleDateString()} - {currentTime.toLocaleTimeString()}
               </span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Users className="w-4 h-4" />
-                            <span>{orders.length} Total Orders</span>
-                        </div>
+                        {/*<div className="flex items-center gap-2">*/}
+                        {/*    <Users className="w-4 h-4" />*/}
+                        {/*    <span>{fetchedOrders.length} Total Orders</span>*/}
+                        {/*</div>*/}
                     </div>
                 </div>
 
                 {/* Stats Dashboard */}
                 <div className="mb-8">
-                    <StatsDashboard stats={canteenData.systemStats} />
+                    <StatsDashboard stats={canteenData.systemStats} fetchedOrders={fetchedOrders}/>
                 </div>
 
                 {/* Main Content Tabs */}
