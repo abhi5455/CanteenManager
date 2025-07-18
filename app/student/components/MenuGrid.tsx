@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -8,15 +8,17 @@ import { Plus, Minus } from "lucide-react"
 import type { MenuItem, OrderItem } from "@/lib/types"
 import { formatCurrency } from "@/lib/utils"
 import Image from "next/image"
+import axios from "axios";
+import {BASE_URL} from "@/apiurl";
 
 interface MenuGridProps {
-    menu: MenuItem[]
+    // menu: MenuItem[]
     cart: OrderItem[]
     onAddToCart: (item: MenuItem) => void
     onRemoveFromCart: (itemName: string) => void
 }
 
-export default function MenuGrid({ menu, cart, onAddToCart, onRemoveFromCart }: MenuGridProps) {
+export default function MenuGrid({ cart, onAddToCart, onRemoveFromCart }: MenuGridProps) {
     const [selectedCategory, setSelectedCategory] = useState<string>("all")
 
     const categories = [
@@ -25,6 +27,20 @@ export default function MenuGrid({ menu, cart, onAddToCart, onRemoveFromCart }: 
         { id: "snack", label: "Snacks" },
         { id: "beverage", label: "Beverages" },
     ]
+
+    const [menu, setMenu] = useState<MenuItem[]>([])
+
+    useEffect(() => {
+        axios.get(`${BASE_URL}/api/menu`)
+            .then(res => {
+                console.log(res.data)
+                setMenu(res.data)
+
+            })
+            .catch(error => {
+                console.error("Error fetching categories:", error)
+            })
+    }, []);
 
     const filteredMenu = selectedCategory === "all" ? menu : menu.filter((item) => item.category === selectedCategory)
 
@@ -61,9 +77,9 @@ export default function MenuGrid({ menu, cart, onAddToCart, onRemoveFromCart }: 
 
                     return (
                         <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                            <div className="relative h-48">
+                            <div className="relative h-48 px-4 rounded-lg">
                                 <Image
-                                    src={item.image || "/placeholder.svg?height=200&width=300"}
+                                    src={'/img2.webp' || "/placeholder.svg?height=200&width=300"}
                                     alt={item.name}
                                     fill
                                     className="object-cover"
