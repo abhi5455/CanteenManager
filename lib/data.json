@@ -1,0 +1,161 @@
+{
+  "menu": [
+    {
+      "id": 1,
+      "name": "Meals",
+      "price": 40,
+      "category": "main",
+      "available": true,
+      "description": "Complete meal with rice, dal, vegetable, and pickle",
+      "image": "/placeholder.svg?height=200&width=300"
+    },
+    {
+      "id": 2,
+      "name": "Chai",
+      "price": 10,
+      "category": "beverage",
+      "available": true,
+      "description": "Hot tea with milk and sugar",
+      "image": "/placeholder.svg?height=200&width=300"
+    },
+    {
+      "id": 3,
+      "name": "Samosa",
+      "price": 15,
+      "category": "snack",
+      "available": true,
+      "description": "Crispy fried pastry with spiced filling",
+      "image": "/placeholder.svg?height=200&width=300"
+    },
+    {
+      "id": 4,
+      "name": "Vada Pav",
+      "price": 20,
+      "category": "snack",
+      "available": true,
+      "description": "Mumbai street food with spiced potato fritter",
+      "image": "/placeholder.svg?height=200&width=300"
+    },
+    {
+      "id": 5,
+      "name": "Pav Bhaji",
+      "price": 25,
+      "category": "snack",
+      "available": true,
+      "description": "Spicy vegetable curry with soft bread",
+      "image": "/placeholder.svg?height=200&width=300"
+    },
+    {
+      "id": 6,
+      "name": "Coffee",
+      "price": 12,
+      "category": "beverage",
+      "available": true,
+      "description": "Hot coffee with milk",
+      "image": "/placeholder.svg?height=200&width=300"
+    },
+    {
+      "id": 7,
+      "name": "Dosa",
+      "price": 30,
+      "category": "main",
+      "available": true,
+      "description": "South Indian crepe with chutney and sambar",
+      "image": "/placeholder.svg?height=200&width=300"
+    },
+    {
+      "id": 8,
+      "name": "Sandwich",
+      "price": 25,
+      "category": "snack",
+      "available": true,
+      "description": "Grilled vegetable sandwich",
+      "image": "/placeholder.svg?height=200&width=300"
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "studentName": "Hari Kumar",
+      "studentClass": "CS 3rd Year",
+      "items": [
+        {
+          "name": "Meals",
+          "price": 40,
+          "quantity": 1
+        }
+      ],
+      "total": 40,
+      "timeSlot": "10:30",
+      "status": "pending",
+      "timestamp": "2024-01-15T10:30:00Z",
+      "orderNumber": "ORD001"
+    },
+    {
+      "id": 2,
+      "studentName": "Priya Sharma",
+      "studentClass": "ME 2nd Year",
+      "items": [
+        {
+          "name": "Chai",
+          "price": 10,
+          "quantity": 2
+        },
+        {
+          "name": "Samosa",
+          "price": 15,
+          "quantity": 1
+        }
+      ],
+      "total": 35,
+      "timeSlot": "10:30",
+      "status": "preparing",
+      "timestamp": "2024-01-15T10:25:00Z",
+      "orderNumber": "ORD002"
+    },
+    {
+      "id": 3,
+      "studentName": "Rahul Menon",
+      "studentClass": "EC 4th Year",
+      "items": [
+        {
+          "name": "Dosa",
+          "price": 30,
+          "quantity": 1
+        },
+        {
+          "name": "Coffee",
+          "price": 12,
+          "quantity": 1
+        }
+      ],
+      "total": 42,
+      "timeSlot": "1:00",
+      "status": "ready",
+      "timestamp": "2024-01-15T12:45:00Z",
+      "orderNumber": "ORD003"
+    }
+  ],
+  "timeSlots": [
+    {
+      "id": "morning",
+      "time": "10:30",
+      "label": "10:30 AM Break",
+      "capacity": 200,
+      "currentOrders": 45
+    },
+    {
+      "id": "lunch",
+      "time": "1:00",
+      "label": "1:00 PM Lunch",
+      "capacity": 200,
+      "currentOrders": 123
+    }
+  ],
+  "systemStats": {
+    "totalMealsOrdered": 168,
+    "todayRevenue": 3420,
+    "pendingDues": 15000,
+    "totalPendingOrders": 23
+  }
+}
